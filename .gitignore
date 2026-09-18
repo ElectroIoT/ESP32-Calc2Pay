@@ -1,0 +1,26 @@
+# PlatformIO / firmware build output
+firmware/.pio/
+firmware/.vscode/
+firmware/compile_commands.json
+
+# Flutter / app build output
+app/build/
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.pub-cache/
+app/.pub/
+app/*.iml
+app/.idea/
+app/android/.gradle/
+app/android/local.properties
+app/android/app/debug/
+app/android/app/profile/
+app/android/app/release/
+app/ios/Flutter/.last_build_id
+app/ios/Pods/
+
+# Misc
+ui.xml
+*.log
+.DS_Store

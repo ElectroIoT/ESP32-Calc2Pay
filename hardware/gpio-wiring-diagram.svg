@@ -1,0 +1,223 @@
+<svg viewBox="0 0 1700 1150" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="dot" markerWidth="8" markerHeight="8" refX="4" refY="4">
+      <circle cx="4" cy="4" r="3.5" fill="#5f6368"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1700" height="1150" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="850" y="46" text-anchor="middle" font-size="30" font-weight="700" fill="#202124">Calc2Pay — ESP32-S3 GPIO Wiring Diagram</text>
+  <text x="850" y="72" text-anchor="middle" font-size="15" fill="#5f6368">ESP32-S3-WROOM-1-N8R8 · Rev-1 bring-up (bare dev board) · pins from hardware/03-GPIO-MAP.md</text>
+
+  <!-- Legend -->
+  <g font-size="13" fill="#3c4043">
+    <rect x="60" y="95" width="14" height="14" fill="#4285F4"/><text x="80" y="106">SPI (E-Paper)</text>
+    <rect x="220" y="95" width="14" height="14" fill="#EA4335"/><text x="240" y="106">Keypad matrix</text>
+    <rect x="380" y="95" width="14" height="14" fill="#FBBC04"/><text x="400" y="106">UART (Printer / Debug)</text>
+    <rect x="620" y="95" width="14" height="14" fill="#34A853"/><text x="640" y="106">Feedback (LED / Buzzer)</text>
+    <rect x="850" y="95" width="14" height="14" fill="#9334E6"/><text x="870" y="106">I2C expansion</text>
+    <rect x="1020" y="95" width="14" height="14" fill="#80868b"/><text x="1040" y="106">Power / Ground</text>
+  </g>
+
+  <!-- ===================== CENTRAL BOARD ===================== -->
+  <g>
+    <rect x="700" y="150" width="300" height="850" rx="16" fill="#202124"/>
+    <rect x="716" y="166" width="268" height="818" rx="10" fill="#3c4043"/>
+    <text x="850" y="205" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">ESP32-S3-WROOM-1</text>
+    <text x="850" y="226" text-anchor="middle" font-size="13" fill="#bdc1c6">-N8R8 module</text>
+    <rect x="770" y="250" width="160" height="100" rx="6" fill="#5f6368"/>
+    <text x="850" y="305" text-anchor="middle" font-size="12" fill="#e8eaed">RF antenna area</text>
+    <text x="850" y="320" text-anchor="middle" font-size="11" fill="#e8eaed">(keep clear — no copper)</text>
+
+    <!-- USB-C note -->
+    <rect x="800" y="960" width="100" height="24" rx="4" fill="#4285F4"/>
+    <text x="850" y="976" text-anchor="middle" font-size="12" fill="#fff">USB-C (D+/D- fixed)</text>
+  </g>
+
+  <!-- Pin dots + labels on LEFT edge of board (E-paper + Keypad rows) -->
+  <!-- helper coordinates -->
+  <!-- E-paper pins (left side, upper) -->
+  <g font-size="13" fill="#202124">
+    <!-- GPIO11 MOSI -->
+    <circle cx="700" cy="380" r="5" fill="#4285F4"/><text x="690" y="376" text-anchor="end">GPIO11 (MOSI)</text>
+    <circle cx="700" cy="410" r="5" fill="#4285F4"/><text x="690" y="406" text-anchor="end">GPIO12 (CLK)</text>
+    <circle cx="700" cy="440" r="5" fill="#4285F4"/><text x="690" y="436" text-anchor="end">GPIO13 (CS)</text>
+    <circle cx="700" cy="470" r="5" fill="#4285F4"/><text x="690" y="466" text-anchor="end">GPIO14 (DC)</text>
+    <circle cx="700" cy="500" r="5" fill="#4285F4"/><text x="690" y="496" text-anchor="end">GPIO15 (RST)</text>
+    <circle cx="700" cy="530" r="5" fill="#4285F4"/><text x="690" y="526" text-anchor="end">GPIO16 (BUSY)</text>
+    <circle cx="700" cy="560" r="5" fill="#80868b"/><text x="690" y="556" text-anchor="end">3V3</text>
+    <circle cx="700" cy="590" r="5" fill="#80868b"/><text x="690" y="586" text-anchor="end">GND</text>
+
+    <!-- Keypad rows/cols -->
+    <circle cx="700" cy="650" r="5" fill="#EA4335"/><text x="690" y="646" text-anchor="end">GPIO1 (ROW1)</text>
+    <circle cx="700" cy="678" r="5" fill="#EA4335"/><text x="690" y="674" text-anchor="end">GPIO2 (ROW2)</text>
+    <circle cx="700" cy="706" r="5" fill="#EA4335"/><text x="690" y="702" text-anchor="end">GPIO4 (ROW3)</text>
+    <circle cx="700" cy="734" r="5" fill="#EA4335"/><text x="690" y="730" text-anchor="end">GPIO5 (ROW4)</text>
+    <circle cx="700" cy="762" r="5" fill="#EA4335"/><text x="690" y="758" text-anchor="end">GPIO6 (COL1)</text>
+    <circle cx="700" cy="790" r="5" fill="#EA4335"/><text x="690" y="786" text-anchor="end">GPIO7 (COL2)</text>
+    <circle cx="700" cy="818" r="5" fill="#EA4335"/><text x="690" y="814" text-anchor="end">GPIO8 (COL3)</text>
+    <circle cx="700" cy="846" r="5" fill="#EA4335"/><text x="690" y="842" text-anchor="end">GPIO9 (COL4)</text>
+    <circle cx="700" cy="874" r="5" fill="#EA4335"/><text x="690" y="870" text-anchor="end">GPIO10 (COL5)</text>
+  </g>
+
+  <!-- Pin dots + labels on RIGHT edge of board (Printer, LED/Buzzer, I2C, Debug) -->
+  <g font-size="13" fill="#202124">
+    <circle cx="1000" cy="380" r="5" fill="#FBBC04"/><text x="1010" y="376">GPIO17 (PRINTER TX)</text>
+    <circle cx="1000" cy="410" r="5" fill="#FBBC04"/><text x="1010" y="406">GPIO18 (PRINTER RX)</text>
+
+    <circle cx="1000" cy="470" r="5" fill="#34A853"/><text x="1010" y="466">GPIO21 (BUZZER)</text>
+    <circle cx="1000" cy="500" r="5" fill="#34A853"/><text x="1010" y="496">GPIO38 (LED RED)</text>
+    <circle cx="1000" cy="530" r="5" fill="#34A853"/><text x="1010" y="526">GPIO39 (LED GREEN)</text>
+    <circle cx="1000" cy="560" r="5" fill="#34A853"/><text x="1010" y="556">GPIO40 (LED BLUE)</text>
+    <circle cx="1000" cy="590" r="5" fill="#34A853"/><text x="1010" y="586">GPIO41 (USER BTN)</text>
+
+    <circle cx="1000" cy="650" r="5" fill="#9334E6"/><text x="1010" y="646">GPIO42 (I2C SDA)</text>
+    <circle cx="1000" cy="678" r="5" fill="#9334E6"/><text x="1010" y="674">GPIO47 (I2C SCL)</text>
+
+    <circle cx="1000" cy="738" r="5" fill="#80868b"/><text x="1010" y="734">GPIO43 (DEBUG TX)</text>
+    <circle cx="1000" cy="766" r="5" fill="#80868b"/><text x="1010" y="762">GPIO44 (DEBUG RX)</text>
+    <circle cx="1000" cy="794" r="5" fill="#80868b"/><text x="1010" y="790">EN (RESET)</text>
+    <circle cx="1000" cy="822" r="5" fill="#80868b"/><text x="1010" y="818">GPIO0 (BOOT)</text>
+
+    <circle cx="1000" cy="882" r="5" fill="#80868b"/><text x="1010" y="878">5V (printer only — separate rail)</text>
+    <circle cx="1000" cy="910" r="5" fill="#80868b"/><text x="1010" y="906">GND</text>
+  </g>
+
+  <!-- ===================== E-PAPER BOX (top-left) ===================== -->
+  <g>
+    <rect x="120" y="140" width="440" height="270" rx="14" fill="#e8f0fe" stroke="#4285F4" stroke-width="2"/>
+    <text x="140" y="172" font-size="18" font-weight="700" fill="#1a73e8">2.9" E-Paper Display</text>
+    <text x="140" y="192" font-size="12" fill="#5f6368">Waveshare 296x128, SPI — J2 · VERIFY exact connector pinout against your module</text>
+
+    <!-- 8 labeled pin rows for the display connector -->
+    <g font-size="13" fill="#202124">
+      <text x="140" y="222">VCC  →</text><text x="560" y="222" text-anchor="end">3V3</text>
+      <text x="140" y="246">GND  →</text><text x="560" y="246" text-anchor="end">GND</text>
+      <text x="140" y="270">DIN (MOSI) →</text><text x="560" y="270" text-anchor="end">GPIO11</text>
+      <text x="140" y="294">CLK  →</text><text x="560" y="294" text-anchor="end">GPIO12</text>
+      <text x="140" y="318">CS   →</text><text x="560" y="318" text-anchor="end">GPIO13</text>
+      <text x="140" y="342">DC   →</text><text x="560" y="342" text-anchor="end">GPIO14</text>
+      <text x="140" y="366">RST  →</text><text x="560" y="366" text-anchor="end">GPIO15</text>
+      <text x="140" y="390">BUSY →</text><text x="560" y="390" text-anchor="end">GPIO16</text>
+    </g>
+  </g>
+
+  <!-- connector lines from e-paper box to board pins -->
+  <g stroke="#4285F4" stroke-width="2" fill="none" marker-end="url(#dot)">
+    <path d="M560,270 C630,270 630,380 700,380"/>
+    <path d="M560,294 C630,294 630,410 700,410"/>
+    <path d="M560,318 C630,318 630,440 700,440"/>
+    <path d="M560,342 C630,342 630,470 700,470"/>
+    <path d="M560,366 C630,366 630,500 700,500"/>
+    <path d="M560,390 C630,390 630,530 700,530"/>
+  </g>
+  <g stroke="#80868b" stroke-width="1.5" stroke-dasharray="4,3" fill="none" marker-end="url(#dot)">
+    <path d="M560,222 C630,222 630,560 700,560"/>
+    <path d="M560,246 C630,246 630,590 700,590"/>
+  </g>
+
+  <!-- ===================== KEYPAD BOX (bottom-left) ===================== -->
+  <g>
+    <rect x="60" y="590" width="500" height="330" rx="14" fill="#fce8e6" stroke="#EA4335" stroke-width="2"/>
+    <text x="80" y="622" font-size="18" font-weight="700" fill="#c5221f">4x5 Physical Keypad</text>
+    <text x="80" y="642" font-size="12" fill="#5f6368">Direct GPIO matrix scan — no controller IC, no external pull-ups (internal on columns)</text>
+
+    <g font-size="13" fill="#202124">
+      <text x="80" y="670">ROW1 →</text><text x="540" y="670" text-anchor="end">GPIO1</text>
+      <text x="80" y="694">ROW2 →</text><text x="540" y="694" text-anchor="end">GPIO2</text>
+      <text x="80" y="718">ROW3 →</text><text x="540" y="718" text-anchor="end">GPIO4</text>
+      <text x="80" y="742">ROW4 →</text><text x="540" y="742" text-anchor="end">GPIO5</text>
+      <text x="80" y="770">COL1 →</text><text x="540" y="770" text-anchor="end">GPIO6</text>
+      <text x="80" y="794">COL2 →</text><text x="540" y="794" text-anchor="end">GPIO7</text>
+      <text x="80" y="818">COL3 →</text><text x="540" y="818" text-anchor="end">GPIO8</text>
+      <text x="80" y="842">COL4 →</text><text x="540" y="842" text-anchor="end">GPIO9</text>
+      <text x="80" y="866">COL5 →</text><text x="540" y="866" text-anchor="end">GPIO10</text>
+    </g>
+
+    <!-- physical key legend -->
+    <text x="80" y="900" font-size="11" fill="#5f6368">Top row example: [7][8][9][÷][CLR]</text>
+  </g>
+  <g stroke="#EA4335" stroke-width="2" fill="none" marker-end="url(#dot)">
+    <path d="M540,670 C620,670 620,650 700,650"/>
+    <path d="M540,694 C620,694 620,678 700,678"/>
+    <path d="M540,718 C620,718 620,706 700,706"/>
+    <path d="M540,742 C620,742 620,734 700,734"/>
+    <path d="M540,770 C620,770 620,762 700,762"/>
+    <path d="M540,794 C620,794 620,790 700,790"/>
+    <path d="M540,818 C620,818 620,818 700,818"/>
+    <path d="M540,842 C620,842 620,846 700,846"/>
+    <path d="M540,866 C620,866 620,874 700,874"/>
+  </g>
+
+  <!-- ===================== PRINTER BOX (top-right) ===================== -->
+  <g>
+    <rect x="1160" y="140" width="480" height="180" rx="14" fill="#fef7e0" stroke="#FBBC04" stroke-width="2"/>
+    <text x="1180" y="172" font-size="18" font-weight="700" fill="#a35a00">58mm Thermal Printer</text>
+    <text x="1180" y="192" font-size="12" fill="#5f6368">UART, dedicated 5V rail — never powered from 3V3 logic rail</text>
+    <g font-size="13" fill="#202124">
+      <text x="1180" y="222" text-anchor="start">← TX</text><text x="1180" y="242">RX (printer) ← GPIO17</text>
+      <text x="1180" y="266">TX (printer) → GPIO18</text>
+      <text x="1180" y="290">VCC → dedicated PRINTER_5V (polyfuse + bulk cap)</text>
+    </g>
+  </g>
+  <g stroke="#FBBC04" stroke-width="2" fill="none" marker-end="url(#dot)">
+    <path d="M1160,242 C1080,242 1080,380 1000,380"/>
+    <path d="M1160,266 C1080,266 1080,410 1000,410"/>
+  </g>
+
+  <!-- ===================== FEEDBACK BOX (LED/Buzzer/Button) ===================== -->
+  <g>
+    <rect x="1160" y="340" width="480" height="270" rx="14" fill="#e6f4ea" stroke="#34A853" stroke-width="2"/>
+    <text x="1180" y="372" font-size="18" font-weight="700" fill="#188038">Buzzer · RGB LED · User Button</text>
+    <text x="1180" y="392" font-size="12" fill="#5f6368">Buzzer via NPN transistor driver — never GPIO-direct</text>
+    <g font-size="13" fill="#202124">
+      <text x="1180" y="420">Buzzer (via Q1) ← GPIO21</text>
+      <text x="1180" y="444">LED Red   ← GPIO38</text>
+      <text x="1180" y="468">LED Green ← GPIO39</text>
+      <text x="1180" y="492">LED Blue  ← GPIO40</text>
+      <text x="1180" y="516">User button → GPIO41</text>
+    </g>
+  </g>
+  <g stroke="#34A853" stroke-width="2" fill="none" marker-end="url(#dot)">
+    <path d="M1160,420 C1080,420 1080,470 1000,470"/>
+    <path d="M1160,444 C1080,444 1080,500 1000,500"/>
+    <path d="M1160,468 C1080,468 1080,530 1000,530"/>
+    <path d="M1160,492 C1080,492 1080,560 1000,560"/>
+    <path d="M1160,516 C1080,516 1080,590 1000,590"/>
+  </g>
+
+  <!-- ===================== EXPANSION BOX (I2C + Debug) ===================== -->
+  <g>
+    <rect x="1160" y="630" width="480" height="290" rx="14" fill="#f3e8fd" stroke="#9334E6" stroke-width="2"/>
+    <text x="1180" y="662" font-size="18" font-weight="700" fill="#7b1fa2">Expansion — I2C &amp; Debug</text>
+    <text x="1180" y="682" font-size="12" fill="#5f6368">4.7k pull-ups on SDA/SCL · debug header for flashing/console</text>
+    <g font-size="13" fill="#202124">
+      <text x="1180" y="710">I2C SDA → GPIO42</text>
+      <text x="1180" y="734">I2C SCL → GPIO47</text>
+      <text x="1180" y="762">Debug TX → GPIO43</text>
+      <text x="1180" y="786">Debug RX → GPIO44</text>
+      <text x="1180" y="810">EN (reset button)</text>
+      <text x="1180" y="834">GPIO0 (BOOT button)</text>
+      <text x="1180" y="862" fill="#5f6368" font-size="12">GPIO48 = spare, reserved Rev-2</text>
+    </g>
+  </g>
+  <g stroke="#9334E6" stroke-width="2" fill="none" marker-end="url(#dot)">
+    <path d="M1160,710 C1080,710 1080,650 1000,650"/>
+    <path d="M1160,734 C1080,734 1080,678 1000,678"/>
+  </g>
+  <g stroke="#80868b" stroke-width="2" fill="none" marker-end="url(#dot)">
+    <path d="M1160,762 C1080,762 1080,738 1000,738"/>
+    <path d="M1160,786 C1080,786 1080,766 1000,766"/>
+    <path d="M1160,810 C1080,810 1080,794 1000,794"/>
+    <path d="M1160,834 C1080,834 1080,822 1000,822"/>
+  </g>
+
+  <!-- Footer note -->
+  <rect x="60" y="1000" width="1580" height="120" rx="12" fill="#f1f3f4"/>
+  <text x="80" y="1030" font-size="14" font-weight="700" fill="#202124">Reserved — never wire anything here</text>
+  <text x="80" y="1054" font-size="13" fill="#3c4043">GPIO 26–32: SPI Flash (all WROOM-1 variants)   ·   GPIO 33–37: Octal PSRAM (N8R8 variant only)   ·   GPIO 19/20: native USB D-/D+   ·   GPIO 0/3/45/46: boot/JTAG strapping pins</text>
+  <text x="80" y="1080" font-size="13" fill="#3c4043">Full reasoning: hardware/01-DESIGN-REVIEW.md §2/§5 · authoritative pin table: hardware/03-GPIO-MAP.md</text>
+  <text x="80" y="1104" font-size="12" fill="#5f6368">Printer 5V and 3V3 logic rail are electrically separate (own polyfuse + bulk cap each) — see hardware/05-POWER-TREE.md</text>
+</svg>
