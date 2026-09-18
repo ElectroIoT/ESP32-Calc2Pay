@@ -14,6 +14,7 @@
   - Status characteristic (read/notify, JSON: `{fw_version, state}`): `c2f5e002-3a9b-4b7e-8f21-6d1a2c3e4f50`
   - Device ID characteristic (read-only, string — device's BLE MAC address): `c2f5e003-3a9b-4b7e-8f21-6d1a2c3e4f50`
   - Device advertises as `"Calc2Pay"`. BLE pairing/bonding security is not yet implemented firmware-side (open/unauthenticated) — the app currently connects without any pairing UI, matching that.
+- **Verified end-to-end against real hardware (2026-09-18)**: connect → device status (firmware version + state) reads correctly → merchant config screen loads correctly → edited GST 0→18 → saved → re-read confirms it persisted on the ESP32. Three real bugs were found and fixed to get here (see "Bugs found and fixed" below) — two in the app, one in firmware.
 
 ## Source files and what each owns
 
@@ -39,6 +40,14 @@ The Calc2Pay hardware design wires its printer to the ESP32 over UART, not BLE (
 - `printText()`/`printRaw()` send plain UTF-8 bytes in ~180-byte chunks (many BLE printer modules have small MTU/buffer limits) — **not full ESC/POS command support** (no bold/alignment/QR/image printing), just plain text + line feeds. Good enough for a "test print" smoke test; a real receipt formatter would need proper ESC/POS command bytes for anything beyond plain text.
 - This BLE connection is entirely independent of the Calc2Pay device's BLE connection — Android supports multiple simultaneous BLE GATT connections, so both can be connected at once in principle. **Not tested with both connected simultaneously.**
 - Two Android devices can both be connected to the SAME BLE thermal printer at once, in theory. Not a concern for a single-phone POS use case, not tested.
+
+## Bugs found and fixed against real hardware (2026-09-18)
+
+1. **Android 12+ permission check always failed.** `requestBlePermissions()` (now in `lib/ble/ble_permissions.dart`) required `locationWhenInUse` to be granted alongside `bluetoothScan`/`bluetoothConnect`, but that permission is excluded via `maxSdkVersion="30"` in the manifest on Android 12+ and can never be granted there — silently blocking every scan. Fixed by only gating success on `bluetoothScan`/`bluetoothConnect`.
+2. **Concurrent BLE GATT reads could hang forever.** `DeviceHomeScreen` fired `readStatus()` and `readDeviceId()` as two separate, unawaited `.then()` chains. BLE only allows one outstanding request per connection; issuing two at once risks a response being misrouted to the wrong pending request, leaving one hang indefinitely with neither a result nor an error. Fixed with a `_serialized()` FIFO queue in `Calc2PayBleService` that funnels every read/write through one queue, plus an 8s timeout so a genuine stall surfaces as a catchable `TimeoutException` instead of hanging silently.
+3. **Trailing null byte broke JSON parsing.** BLE characteristic values on this stack were arriving with an extra `0x00` byte appended (odd-length payloads padded to even length — the JSON was 37 bytes, the value read back was 38). `jsonDecode` threw `FormatException: Unexpected character` on the trailing byte. Fixed by stripping trailing null bytes before decoding, applied to every read and notification.
+
+Bug #3 was actually a symptom of a bigger firmware bug — see `../firmware/MEMORY.md`'s "Hard rule added after the setValue() bug": `NimBLECharacteristic::setValue(const char*)` was silently storing a raw memory address instead of copying string content, for characteristics where the value was computed dynamically (e.g. from `onWrite`/`onRead` callbacks). This was diagnosed by adding a temporary raw-hex-bytes dump to a `FormatException` message and reading it via `uiautomator dump` (no phone-side Flutter log capture was available in this session) — the bytes `40 80 ca 3f` decoded as a plausible ESP32-S3 SRAM address, not garbage, which pointed straight at a pointer-instead-of-string bug rather than a transient BLE glitch.
 
 ## Known gaps / simplifications made to get a first build compiling
 

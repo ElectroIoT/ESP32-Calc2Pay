@@ -4,8 +4,8 @@ Living task list. Check items off as they're done; add new ones as they're disco
 
 ## 🔴 Immediate — close the loop on what's already built
 
-- [ ] Debug why the app's device-status view shows firmware version `?` / state `unknown` even though the BLE read reports `GATT_SUCCESS` at the platform layer (see `app/MEMORY.md` — likely a JSON decode or characteristic-mapping issue, needs on-device Flutter log capture, not just ADB/logcat)
-- [ ] Confirm merchant config round-trip: write UPI VPA/GST/discount from the app, power-cycle the ESP32, confirm it persisted in NVS
+- [x] ~~Debug why the app's device-status view shows firmware version `?` / state `unknown`~~ — **fixed 2026-09-18**: real firmware bug in `BleService.cpp` (`setValue(const char*)` bound to a POD-storing template overload instead of copying the string, corrupting characteristic values); app-side concurrency + trailing-null-byte bugs also fixed. See `firmware/MEMORY.md` and `app/MEMORY.md`.
+- [x] ~~Confirm merchant config round-trip~~ — **verified 2026-09-18**: wrote GST=18 from the app, reopened the screen, read back GST=18 from the device, confirming it round-trips through NVS correctly.
 - [ ] Wire the physical 4×5 keypad to the dev board and confirm key presses reach the calculator engine
 - [ ] Wire the 58mm thermal printer and confirm a real receipt prints correctly (baud rate is a best guess — verify against the actual printer)
 - [ ] Confirm the QR code rendered on the e-paper actually scans correctly with a real UPI app

@@ -4,7 +4,7 @@ Instructions for Claude (or any AI agent) working in this folder. Read `MEMORY.m
 
 ## What this folder is
 
-The ESP32-S3 firmware source: a PlatformIO project (Arduino framework) that compiles clean but has not been flashed to or tested on real hardware. See `MEMORY.md` for exactly what's implemented, what's simplified, and what's still open.
+The ESP32-S3 firmware source: a PlatformIO project (Arduino framework), flashed to and running on real hardware with BLE communication verified end-to-end against the companion app. See `MEMORY.md` for exactly what's implemented, what's simplified, and what's still open.
 
 ## Folder layout
 
@@ -29,7 +29,8 @@ Verify the build still compiles (`python -m platformio run`) before and after ma
 6. **Do not implement signed OTA, secure boot, or flash encryption in Rev-1** unless explicitly asked — these are deliberately deferred (see `README.md`'s Security notes) to avoid over-engineering before the hardware itself is validated.
 
 7. **BLE GATT UUIDs in `include/ble_uuids.h` are now allocated and considered a stable contract with `../app/`.** Don't change them casually — if a change is genuinely needed, update `../app/MEMORY.md` in the same change.
-8. **This has not been tested on real hardware.** Don't describe features as "working" or "verified" beyond "compiles" — `MEMORY.md`'s "Known gaps" section lists what's still unverified (panel controller, printer baud rate, BLE pairing security). Keep that section honest as gaps get closed.
+8. **Only describe a feature as "working" or "verified" if it's actually been confirmed on real hardware.** `MEMORY.md`'s "Known gaps" section lists what's still unverified (panel controller, printer baud rate, BLE pairing security). Keep that section honest as gaps get closed.
+9. **Never call `NimBLECharacteristic::setValue()` with a bare `const char*`.** Always wrap it in an explicit `std::string(...)`. A `const char*` can silently resolve to a templated POD-storing overload that stores the pointer's raw bytes instead of copying the string content — a real bug found and fixed in `src/BleService.cpp` on 2026-09-18 (see `MEMORY.md`). This applies to any future characteristic added to this codebase.
 
 ## When continuing implementation
 

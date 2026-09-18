@@ -6,6 +6,18 @@ namespace {
 MerchantConfig* g_merchantConfig = nullptr;
 NimBLECharacteristic* g_merchantCfgChar = nullptr;
 
+// IMPORTANT: always call setValue() with an explicit std::string, never a
+// bare `const char*` (from String::c_str() or a string literal). NimBLE-
+// Arduino's setValue() has a templated overload for trivial/POD types
+// alongside the string-copying overloads; a `const char*` argument can bind
+// to that POD template instead, which stores the raw pointer VALUE (4 or 8
+// bytes) as the characteristic's binary content rather than copying the
+// string it points to. This was a real, reproduced bug: the merchant-config
+// characteristic was returning a 4-byte stack/heap address instead of JSON.
+std::string toStdString(const String& s) {
+    return std::string(s.c_str(), s.length());
+}
+
 class MerchantCfgCallbacks : public NimBLECharacteristicCallbacks {
     void onWrite(NimBLECharacteristic* chr) override {
         if (!g_merchantConfig) return;
@@ -15,13 +27,7 @@ class MerchantCfgCallbacks : public NimBLECharacteristicCallbacks {
         }
         // Echo the (possibly clamped/normalized) stored config back so the
         // app can confirm what was actually persisted.
-        chr->setValue(g_merchantConfig->toJson().c_str());
-    }
-
-    void onRead(NimBLECharacteristic* chr) override {
-        if (g_merchantConfig) {
-            chr->setValue(g_merchantConfig->toJson().c_str());
-        }
+        chr->setValue(toStdString(g_merchantConfig->toJson()));
     }
 };
 
@@ -40,13 +46,13 @@ void BleService::begin(MerchantConfig* config) {
         C2P_CHAR_MERCHANT_CFG_UUID,
         NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE);
     merchantCfgChar->setCallbacks(new MerchantCfgCallbacks());
-    merchantCfgChar->setValue(merchantConfig->toJson().c_str());
+    merchantCfgChar->setValue(toStdString(merchantConfig->toJson()));
     g_merchantCfgChar = merchantCfgChar;
 
     statusChar = service->createCharacteristic(
         C2P_CHAR_STATUS_UUID,
         NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::NOTIFY);
-    statusChar->setValue("{\"fw_version\":\"0.1.0\",\"state\":\"idle\"}");
+    statusChar->setValue(toStdString("{\"fw_version\":\"0.1.0\",\"state\":\"idle\"}"));
 
     deviceIdChar = service->createCharacteristic(
         C2P_CHAR_DEVICE_ID_UUID,
@@ -67,6 +73,6 @@ bool BleService::isConnected() const {
 void BleService::notifyStatus(const String& state) {
     if (!statusChar) return;
     String json = String("{\"fw_version\":\"0.1.0\",\"state\":\"") + state + "\"}";
-    statusChar->setValue(json.c_str());
+    statusChar->setValue(toStdString(json));
     statusChar->notify();
 }

@@ -12,9 +12,9 @@ A handheld, open-source calculator/payment terminal: physical keypad, 2.9" e-pap
 |---|---|
 | `hardware/` | Full written spec (9 documents) exists and is internally consistent. GPIO map has been corrected from the original design brief (see below). No EasyEDA project, no PCB layout, no Gerbers, no physical prototype yet. |
 | `firmware/` | **Flashed to real hardware.** PlatformIO/Arduino project compiles clean and has been flashed to a physical ESP32-S3 dev board (native USB, COM port, MAC confirmed via esptool). **The e-paper display is now physically wired and confirmed working** as of 2026-09-18. Keypad and thermal printer are not physically wired yet — see `firmware/MEMORY.md` "Known gaps." |
-| `app/` | **Working build, sideloaded to a phone.** Flutter project (`calc2pay_companion`) implementing BLE scan/connect to the Calc2Pay device, merchant config read/write, device status display, plus a separate feature to connect a standalone BLE thermal printer. `flutter analyze`/`flutter test` clean, debug APK built and delivered to the user twice. Not yet connected to the real flashed ESP32 board from a phone — see `app/MEMORY.md` "Known gaps." |
+| `app/` | **Verified end-to-end against real hardware.** Flutter project (`calc2pay_companion`) installed on a real Android phone, connected to the flashed ESP32-S3 over BLE, and confirmed working: device status reads correctly, merchant config (UPI VPA/GST/discount) reads, edits, saves, and persists correctly on the device. Three real bugs were found and fixed to get here (2 app-side, 1 firmware-side) — see `app/MEMORY.md` and `firmware/MEMORY.md`. |
 
-Nothing has been fabricated or physically tested yet — firmware exists and compiles as source/logic, not as a proven-on-hardware artifact.
+Hardware fabrication (real custom PCB) has not happened yet — everything above is verified on a generic ESP32-S3 dev board, not the final Calc2Pay PCB.
 
 ## The most important fact to know before touching anything
 
@@ -39,13 +39,17 @@ There is an **unrelated, pre-existing, closed-source Flutter app** called Calc2P
 
 1. Thermal-printer connector/baud-rate specifics still need physical wiring + testing (e-paper is now done — see above).
 2. Buck converter part number — needs live stock verification (hardware only, doesn't block firmware/app; not relevant to the current bare-dev-board bring-up either).
-3. **The app has never connected to the real flashed ESP32 board.** Firmware is flashed and the e-paper works standalone; the app builds and was sideloaded to a phone; the two have not yet been connected to each other over BLE. This is the single highest-value next step.
+3. ~~The app has never connected to the real flashed ESP32 board~~ — **done and verified 2026-09-18**: BLE connect, device status, and full merchant-config read/write/persist round-trip all confirmed working, after fixing 3 real bugs (see `app/MEMORY.md` and `firmware/MEMORY.md`).
 4. BLE pairing/bonding security (currently open/unauthenticated in firmware, matched by no pairing UI in the app) — needs hardening before treating the BLE link as trustworthy.
 5. ~~Final open-source license~~ — **decided: MIT**, see `LICENSE` at repo root (2026-09-18).
 6. Repo structure: **decided to ship as one monorepo** for now (pushed to `https://github.com/ElectroIoT/ESP32-Calc2Pay`, 2026-09-18) — can still be split into separate repos later if that becomes preferable.
 7. iOS support for `app/` is incomplete (missing `Info.plist` Bluetooth usage strings, untested — no Mac/iOS toolchain in this dev environment).
 8. Keypad and thermal printer still need to be physically wired to the dev board for full end-to-end testing (currently only the e-paper is connected).
 
+## Standing rule added after the BLE debugging session (2026-09-18)
+
+**Never call `NimBLECharacteristic::setValue()` with a bare `const char*` in firmware.** Always wrap it in an explicit `std::string(...)`. A real bug (root cause of a wider BLE data-corruption issue) was found and fixed where this pattern silently stored a raw memory address instead of the intended string — see `firmware/MEMORY.md` and `firmware/CLAUDE.md` rule 9 for the full story.
+
 ## Suggested next step
 
-Connect the sideloaded app to the flashed ESP32-S3 board over BLE (device should advertise as `"Calc2Pay"`) and validate merchant-config read/write end-to-end — this is the project's first true cross-folder validation. Then wire up the keypad and printer to close out full hardware bring-up.
+Wire up the physical keypad and thermal printer to the dev board to close out full hardware bring-up — BLE communication between the app and ESP32 is now fully verified, so the remaining gap is purely physical peripherals, not software.

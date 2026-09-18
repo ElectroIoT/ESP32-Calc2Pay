@@ -53,8 +53,8 @@ Complete, itemized feature list across all three parts of the project. ✅ = imp
 |---|---|---|
 | BLE scan + connect to the Calc2Pay device | ✅ | Confirmed: connects to a real ESP32-S3 device advertising as "Calc2Pay" |
 | Runtime BLE/location permission handling (Android 12+ correct) | ✅ | Fixed a real bug this session where a legacy permission blocked scanning on modern Android |
-| Device status display (connection, firmware version, device ID) | 🧩 | Device ID confirmed working; firmware version/state field has a known display bug being investigated |
-| Merchant settings screen (UPI VPA, business name, GST %, discount %) | 🧩 | Read/write implemented, not yet confirmed round-tripping with firmware in this session |
+| Device status display (connection, firmware version, device ID) | ✅ | Confirmed correct (firmware version, state, device ID) after fixing a firmware-side BLE characteristic corruption bug |
+| Merchant settings screen (UPI VPA, business name, GST %, discount %) | ✅ | Confirmed full round-trip: edited GST from the app, saved, re-read from device — persisted correctly |
 | **Standalone BLE thermal printer connector** (separate from the Calc2Pay device) | 🧩 | Broad BLE scan, heuristic write-characteristic detection, plain-text test print — for portable Bluetooth receipt printers |
 | Disconnect / reconnect flow | 🧩 | Basic flow implemented; no auto-reconnect on dropped connection yet |
 | iOS support | 🗓️ | Missing `Info.plist` Bluetooth usage strings; untested (no Mac/iOS toolchain available) |
